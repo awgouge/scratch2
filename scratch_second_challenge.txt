@@ -1,0 +1,28 @@
+Exact Challenge: On your laptop, install Kubernetes environment such as Minikube.  On a container in the Minikube environment, install NiFi.  As the data ingest source for NiFi, use NASA Web/HTTP Server logs.  Show a Transform on the data that stores the transformed data locally on your file system.
+
+Challenge proof of work:
+	Level 1 proof:
+		Use git repo and include:
+			Original data
+			Transformed data
+			Exported NiFi Template
+		Required work:
+			Install Minikube on laptop
+			create linux pod using existing image
+			install NiFi within the pod
+			expose NiFi web interface
+			Copy data file to the pod/container
+			Create NiFi transform
+			Retrieve output file from the pod
+			export NiFi template
+			commit all files to the git repo
+	Level 2 proof:
+		Create video demo
+			Walk through full flow in NiFi web interface
+		Required work:
+			Level 1 proof complete
+			Record video
+	Level 3 proof:
+		
+			
+
