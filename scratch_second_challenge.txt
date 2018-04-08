@@ -1,28 +1,58 @@
 Exact Challenge: On your laptop, install Kubernetes environment such as Minikube.  On a container in the Minikube environment, install NiFi.  As the data ingest source for NiFi, use NASA Web/HTTP Server logs.  Show a Transform on the data that stores the transformed data locally on your file system.
 
-Challenge proof of work:
-	Level 1 proof:
-		Use git repo and include:
-			Original data
-			Transformed data
-			Exported NiFi Template
-		Required work:
-			Install Minikube on laptop
-			create linux pod using existing image
-			install NiFi within the pod
-			expose NiFi web interface
-			Copy data file to the pod/container
-			Create NiFi transform
-			Retrieve output file from the pod
-			export NiFi template
-			commit all files to the git repo
-	Level 2 proof:
-		Create video demo
-			Walk through full flow in NiFi web interface
-		Required work:
-			Level 1 proof complete
-			Record video
-	Level 3 proof:
-		
-			
+Assumptions and errata:
+1. Nifi can be installed a run native on a Mac, but the instructions specifically call out installing a Kubernetes environment so Kubernetes is a requirement for success and will be used.
+2. No Nifi version was specified so assuming latest; 1.6
+3. No Kubernetes version was specified.  Using server version 1.9.4
+4. Using NASA Apache Web Server logs that are freely available.  Assuming access logs.
+5. Transforming logs from standard apache access logs to CSV, JSON, and AVRO formats and writing to file with corresponding file extenstion.
+6. To demonstrate Docker knowledge, creating a custom image with nifi installed that can be run via Kubernetes or directly via Docker.
+7. Result transform files will not be included in the image or the git repo due to size.
+8. To demonstrate transform, instructions are provided that include importing a Nifi template, enabling services, and startig all processors in the template.
+9. If local git repo dir is not exposed to the container, then directories will be created directly within the container to hold the transform results.
+
+docker image: awgouge/nifi:latest
+git repo: https://github.com/awgouge/scratch2.git
+NASA Logs: ftp://ita.ee.lbl.gov/traces/NASA_access_log_Jul95.gz
+			ftp://ita.ee.lbl.gov/traces/NASA_access_log_Aug95.gz
+
+
+Answer Details:
+1. Clone the git repo listed above
+	a. git clone https://github.com/awgouge/scratch2.git
+	b. cd scratch2
+2. setup the kubernetes deployment
+	a. kubectl create -f mynifi.combined.yaml
+	b. kubectl get deployments
+3. connect to nifi instance
+	a. http://<exposedIP>:8080/nifi/
+4. import the Flow template and add to your nifi workspace
+	a. Operate->Upload Template
+	b. templates/Second_Challenge_working_local.xml
+5. Add the template to your canvas
+	a. Add Template
+	b. Second_Challenge_working_local
+6. start the services needed by the Flow.  Service Only.
+	a. Operate->Configuration->Controller Services
+	b. AvroReader
+	c. AvroRecodSetWriter
+	d. CSVReader
+	e. JsonRecordSetWriter
+7. start the Flow
+	a. Operate->Start
+8. Monitor the flow for operation
+	a. Data entry point is "Get NASA Logs via FTP"
+		i. Once Read/Write shows "0 bytes/35.58 MB" stop the "Get NASA Logs via FTP" processor.  Ideally, this would be edited to account for duplicates and such long term.
+9. Verify CSV tranform
+	a. kubectl exec <pod> -- tail -20 /second_challenge/enhanced_access_logs/csv/NASA_access_log_Aug95.csv
+	b. kubectl exec <pod> -- tail -20 /second_challenge/enhanced_access_logs/csv/NASA_access_log_Jul95.csv
+10. Verify AVRO transform
+	a. kubectl exec <pod> -- tail -20 /second_challenge/enhanced_access_logs/avro/NASA_access_log_Jul95.avro
+	b. kubectl exec <pod> -- tail -20 /second_challenge/enhanced_access_logs/avro/NASA_access_log_Aug95.avro
+11. Verify JSON transform
+	a. kubectl exec <pod> -- tail -20 /second_challenge/enhanced_access_logs/json/NASA_access_log_Jul95.json
+	b. kubectl exec <pod> -- tail -20 /second_challenge/enhanced_access_logs/json/NASA_access_log_Aug95.json
+
+
+
 
