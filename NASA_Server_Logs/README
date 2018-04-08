@@ -1,3 +1,0 @@
-data: Original NASA Web Server log data
-source: NiFi data source.  place raw web server logs here
-dest: Transformed data.  After data transform, output will be placed here
